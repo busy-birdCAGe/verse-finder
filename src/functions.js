@@ -1,17 +1,6 @@
-export async function getClosestVerses(
-  extractor,
-  query,
-  embeddings,
-  statusBox,
-  verseDisplay
-) {
-  if (query.input.trim() === "") {
-    statusBox.error("Please enter a query.");
-    return;
-  }
-  statusBox.busy("Processing text...");
+export async function getClosestVerseIndices(extractor, query, embeddings) {
   await new Promise((resolve) => setTimeout(resolve, 0)); //Allow UI to update
-  let output = await extractor(`clustering: ${query.input}`, {
+  let output = await extractor(`clustering: ${query}`, {
     pooling: "mean",
     normalize: true,
   });
@@ -22,9 +11,7 @@ export async function getClosestVerses(
     similarity: cosineSimilarity(queryEmbedding, embedding),
   }));
   similarityScores.sort((a, b) => b.similarity - a.similarity);
-  const top3Indexes = similarityScores.slice(0, 3).map((item) => item.index);
-  statusBox.success("Ready!");
-  verseDisplay.byIndices(top3Indexes);
+  return similarityScores.slice(0, 3).map((item) => item.index);
 }
 
 export async function loadEmbeddings() {
@@ -77,17 +64,23 @@ export async function audioChunkToText(chunk, transcriber) {
   return transcript.text;
 }
 
-export const verseDisplay = new class VerseDisplay {
-  constructor(bibleVerses) {
+export function canRecord() {
+  if (!navigator.mediaDevices) {
+    return false;
+  }
+  return true;
+}
+
+export const verseDisplay = new (class VerseDisplay {
+  constructor() {
     this.element = document.getElementById("result");
-    this.bibleVerses = bibleVerses;
   }
 
-  byIndices(verseIndices) {
+  byIndices(verseIndices, bibleVerses) {
     this.element.innerHTML = "";
 
     verseIndices.forEach((index) => {
-      const verseText = this.bibleVerses[index];
+      const verseText = bibleVerses[index];
       const verseMatch = verseText.match(/(.+?\s*\d+:\d+)\s+(.+)/);
       const reference = verseMatch ? verseMatch[1] : "";
       const extractedVerse = verseMatch ? verseMatch[2] : verseText;
@@ -104,9 +97,9 @@ export const verseDisplay = new class VerseDisplay {
       this.element.appendChild(verseCard);
     });
   }
-}
+})();
 
-export const statusBox = new class StatusBox {
+export const statusBox = new (class StatusBox {
   constructor() {
     this.element = document.getElementById("status");
     this.statusClasses = {
@@ -132,12 +125,11 @@ export const statusBox = new class StatusBox {
   error(message) {
     this.update(message, "error");
   }
-}
+})();
 
-export const recorder = new class Recorder {
+export const recorder = new (class Recorder {
   constructor() {
     this.element = document.getElementById("record");
-    this.statusBox = statusBox;
     this.isRecording = false;
     this.audioStream = null;
     this.recordingInterval = null;
@@ -165,10 +157,6 @@ export const recorder = new class Recorder {
   }
 
   async startRecording() {
-    if (!navigator.mediaDevices) {
-      this.statusBox.error("Cannot use microphone without https");
-      return;
-    }
     this.isRecording = true;
     this.audioStream = await navigator.mediaDevices.getUserMedia({
       audio: true,
@@ -208,9 +196,9 @@ export const recorder = new class Recorder {
     setTimeout(() => mediaRecorder.stop(), seconds * 1000);
     return mediaRecorder;
   }
-}
+})();
 
-export const queryBox = new class QueryBox {
+export const queryBox = new (class QueryBox {
   constructor() {
     this.element = document.getElementById("query");
     this.value = this.element.value;
@@ -223,4 +211,4 @@ export const queryBox = new class QueryBox {
   set input(newValue) {
     this.element.value = newValue;
   }
-}
+})();
