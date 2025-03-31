@@ -29,3 +29,6 @@ jobs:
       - name:  Upload Build To S3
         run: |
             aws s3 cp src s3://dev-verse-finder --recursive
+      - name: Reset Cloudfront Cache
+        run: |
+          aws cloudfront create-invalidation --distribution-id E2UUYWBMTKD2SI --paths "/*"

@@ -38,7 +38,7 @@ Resources:
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName: !GetAtt FrontEndBucket.WebsiteURL
+          - DomainName: !GetAtt FrontEndBucket.DomainName
             Id: S3Origin
             CustomOriginConfig:
               OriginProtocolPolicy: http-only
