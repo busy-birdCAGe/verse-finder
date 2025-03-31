@@ -1,6 +1,9 @@
 # Overview
 A web app that leverages client-side AI models to find bible verses.
 
+# Demo
+The demo can be viewed [here](https://d1h38zynxu59mp.cloudfront.net/). Due to the size of the AI models used, it will crash most mobile browsers. Please use a browser on a desktop.
+
 # Features
 - Find similar verses based on text input.
 - Find similar verses based on transcribed audio.
