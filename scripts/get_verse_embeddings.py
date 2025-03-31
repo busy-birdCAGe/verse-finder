@@ -10,6 +10,6 @@ embeddings = model.encode(search_documents, precision="float32", normalize_embed
 embeddings_array = np.array(embeddings, dtype=np.float32)
 shape = np.array(embeddings_array.shape, dtype=np.int32)
 
-with open("src/embeddings.bin", "wb") as f:
+with open("src/verse_embeddings.bin", "wb") as f:
     f.write(shape.tobytes())
     f.write(embeddings_array.tobytes())
