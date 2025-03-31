@@ -55,6 +55,7 @@ Resources:
             QueryString: false
             Cookies:
               Forward: none
+        DefaultRootObject: index.html
         ViewerCertificate:
           CloudFrontDefaultCertificate: true
         Enabled: true
