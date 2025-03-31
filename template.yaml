@@ -19,7 +19,7 @@ Resources:
         IgnorePublicAcls: false
         RestrictPublicBuckets: false
       WebsiteConfiguration:
-        IndexDocument: index.html
+        IndexDocument: src/index.html
 
   FrontEndBucketPolicy:
     Type: AWS::S3::BucketPolicy

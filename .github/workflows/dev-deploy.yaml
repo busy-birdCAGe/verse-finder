@@ -28,4 +28,4 @@ jobs:
         run: sam deploy --template-file "template.yaml" --stack-name "dev-verse-finder" --parameter-overrides "BucketName=dev-verse-finder" --no-confirm-changeset --no-fail-on-empty-changeset --resolve-s3 --region "us-east-1" --capabilities "CAPABILITY_IAM"
       - name:  Upload Build To S3
         run: |
-            aws s3 cp dist s3://dev-verse-finder --recursive --exclude "*" --include "bible.txt" --include "embeddings.bin" --include "functions.js" --include "index.js" --include "index.html"
+            aws s3 cp src s3://dev-verse-finder --recursive
