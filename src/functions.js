@@ -77,7 +77,7 @@ export async function audioChunkToText(chunk, transcriber) {
   return transcript.text;
 }
 
-export class VerseDisplay {
+export const verseDisplay = new class VerseDisplay {
   constructor(bibleVerses) {
     this.element = document.getElementById("result");
     this.bibleVerses = bibleVerses;
@@ -106,7 +106,7 @@ export class VerseDisplay {
   }
 }
 
-export class StatusBox {
+export const statusBox = new class StatusBox {
   constructor() {
     this.element = document.getElementById("status");
     this.statusClasses = {
@@ -134,8 +134,8 @@ export class StatusBox {
   }
 }
 
-export class Recorder {
-  constructor(statusBox) {
+export const recorder = new class Recorder {
+  constructor() {
     this.element = document.getElementById("record");
     this.statusBox = statusBox;
     this.isRecording = false;
@@ -166,8 +166,8 @@ export class Recorder {
 
   async startRecording() {
     if (!navigator.mediaDevices) {
-        this.statusBox.error("Cannot use microphone without https");
-        return
+      this.statusBox.error("Cannot use microphone without https");
+      return;
     }
     this.isRecording = true;
     this.audioStream = await navigator.mediaDevices.getUserMedia({
@@ -210,7 +210,7 @@ export class Recorder {
   }
 }
 
-export class QueryBox {
+export const queryBox = new class QueryBox {
   constructor() {
     this.element = document.getElementById("query");
     this.value = this.element.value;

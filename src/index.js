@@ -3,19 +3,15 @@ import {
   env,
 } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers";
 import {
-  StatusBox,
-  VerseDisplay,
+  statusBox,
+  verseDisplay,
   audioChunkToText,
   loadBibleVerses,
   loadEmbeddings,
   getClosestVerses,
-  Recorder,
-  QueryBox
+  recorder,
+  queryBox
 } from "./functions.js";
-
-const queryBox = new QueryBox();
-const statusBox = new StatusBox();
-const recorder = new Recorder(statusBox);
 
 env.allowLocalModels = false;
 env.useBrowserCache = false;
