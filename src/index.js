@@ -18,6 +18,7 @@ const statusBox = new StatusBox();
 const recorder = new Recorder(statusBox);
 
 env.allowLocalModels = false;
+env.useBrowserCache = false;
 statusBox.busy("Loading text model...");
 const extractor = await pipeline(
   "feature-extraction",
