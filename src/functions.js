@@ -15,7 +15,7 @@ export async function getClosestVerseIndices(extractor, query, embeddings) {
 }
 
 export async function loadEmbeddings() {
-  const response = await cachedFetch("embeddings.bin");
+  const response = await cachedFetch("nkjv_embeddings.bin");
   const buffer = await response.arrayBuffer();
   const view = new DataView(buffer);
   const rows = view.getInt32(0, true);
@@ -29,9 +29,12 @@ export async function loadEmbeddings() {
 }
 
 export async function loadBibleVerses() {
-  const response = await cachedFetch("bible.txt");
+  const response = await cachedFetch("nkjv.csv");
   const text = await response.text();
-  return text.split("\n");
+  return text.split("\n").map((line) => {
+    let [book, chapter, verse, text] = line.split("|");
+    return {book, chapter, verse, text}
+  });
 }
 
 export function cosineSimilarity(vecA, vecB) {
@@ -80,18 +83,15 @@ export const verseDisplay = new (class VerseDisplay {
     this.element.innerHTML = "";
 
     verseIndices.forEach((index) => {
-      const verseText = bibleVerses[index];
-      const verseMatch = verseText.match(/(.+?\s*\d+:\d+)\s+(.+)/);
-      const reference = verseMatch ? verseMatch[1] : "";
-      const extractedVerse = verseMatch ? verseMatch[2] : verseText;
+      const verseData = bibleVerses[index];
 
       const verseCard = document.createElement("div");
       verseCard.className =
         "p-4 bg-white border border-gray-300 rounded-lg shadow-md";
 
       verseCard.innerHTML = `
-        <h3 class="text-lg font-bold text-blue-700">${reference}</h3>
-        <p class="mt-1 text-gray-700 text-sm font-serif leading-tight">${extractedVerse}</p>
+        <h3 class="text-lg font-bold text-blue-700">${verseData.book} ${verseData.chapter}:${verseData.verse}</h3>
+        <p class="mt-1 text-gray-700 text-sm font-serif leading-tight">${verseData.text}</p>
     `;
 
       this.element.appendChild(verseCard);
@@ -157,6 +157,8 @@ export const recorder = new (class Recorder {
   }
 
   async startRecording() {
+    this.last5Seconds = null;
+    this.last10Seconds = null;
     this.isRecording = true;
     this.audioStream = await navigator.mediaDevices.getUserMedia({
       audio: true,
@@ -192,7 +194,7 @@ export const recorder = new (class Recorder {
 
   recorderGenerator(seconds) {
     const mediaRecorder = new MediaRecorder(this.audioStream);
-    mediaRecorder.start(seconds * 1000);
+    mediaRecorder.start();
     setTimeout(() => mediaRecorder.stop(), seconds * 1000);
     return mediaRecorder;
   }
